@@ -1,6 +1,6 @@
 import uuid
 from collections.abc import Sequence
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 
 from sqlalchemy import (
@@ -20,12 +20,19 @@ from sqlalchemy.orm import joinedload
 from polar.auth.models import AuthSubject, Organization, User
 from polar.billing_entry.repository import BillingEntryRepository
 from polar.event.repository import EventRepository
-from polar.exceptions import PolarRequestValidationError, ValidationError
+from polar.exceptions import PolarError, PolarRequestValidationError, ValidationError
 from polar.kit.metadata import MetadataQuery, apply_metadata_clause, get_metadata_clause
 from polar.kit.pagination import PaginationParams
 from polar.kit.sorting import Sorting
 from polar.kit.time_queries import TimeInterval, get_timestamp_series_cte
-from polar.models import BillingEntry, Event, Meter, SubscriptionProductPrice
+from polar.models import (
+    Benefit,
+    BillingEntry,
+    Event,
+    Meter,
+    ProductPriceMeteredUnit,
+    SubscriptionProductPrice,
+)
 from polar.models.subscription import Subscription
 from polar.organization.resolver import get_payload_organization
 from polar.postgres import AsyncSession
@@ -35,6 +42,14 @@ from polar.worker import enqueue_job
 from .repository import MeterRepository
 from .schemas import MeterCreate, MeterQuantities, MeterQuantity, MeterUpdate
 from .sorting import MeterSortProperty
+
+
+class MeterError(PolarError): ...
+
+
+class CannotArchiveError(MeterError):
+    def __init__(self, message) -> None:
+        super().__init__(message, 410)
 
 
 class MeterService:
@@ -162,6 +177,46 @@ class MeterService:
             update_dict["aggregation"] = meter_update.aggregation
 
         return await repository.update(meter, update_dict=update_dict)
+
+    async def archive(self, session: AsyncSession, meter: Meter) -> Meter:
+        # Check if meter is attached to any active ProductPriceMeteredUnit
+        active_prices = await session.scalar(
+            select(func.count(ProductPriceMeteredUnit.id)).where(
+                ProductPriceMeteredUnit.meter_id == meter.id,
+                ProductPriceMeteredUnit.is_archived.is_(False),
+                ProductPriceMeteredUnit.deleted_at.is_(None),
+            )
+        )
+
+        if active_prices and active_prices > 0:
+            raise CannotArchiveError(
+                "Cannot archive meter that is still attached to active products"
+            )
+
+        # Check if meter is referenced by any active Benefits with meter_credit type
+        active_benefits = await session.scalar(
+            select(func.count(Benefit.id)).where(
+                Benefit.type == "meter_credit",
+                Benefit.properties["meter_id"].as_string() == str(meter.id),
+                Benefit.deleted_at.is_(None),
+            )
+        )
+
+        if active_benefits and active_benefits > 0:
+            raise CannotArchiveError(
+                "Cannot archive meter that is still referenced by active benefits"
+            )
+
+        repository = MeterRepository.from_session(session)
+        meter.archived_at = datetime.now(UTC)
+        return await repository.update(
+            meter, update_dict={"archived_at": meter.archived_at}
+        )
+
+    async def unarchive(self, session: AsyncSession, meter: Meter) -> Meter:
+        repository = MeterRepository.from_session(session)
+        meter.archived_at = None
+        return await repository.update(meter, update_dict={"archived_at": None})
 
     async def events(
         self,
