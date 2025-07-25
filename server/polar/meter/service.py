@@ -61,6 +61,7 @@ class MeterService:
         organization_id: Sequence[uuid.UUID] | None = None,
         metadata: MetadataQuery | None = None,
         query: str | None = None,
+        is_archived: bool | None = None,
         pagination: PaginationParams,
         sorting: list[Sorting[MeterSortProperty]] = [
             (MeterSortProperty.meter_name, False)
@@ -74,6 +75,12 @@ class MeterService:
 
         if query is not None:
             statement = statement.where(Meter.name.ilike(f"%{query}%"))
+
+        if is_archived is not None:
+            if is_archived:
+                statement = statement.where(Meter.archived_at.is_not(None))
+            else:
+                statement = statement.where(Meter.archived_at.is_(None))
 
         if metadata is not None:
             statement = apply_metadata_clause(Meter, statement, metadata)
@@ -169,12 +176,22 @@ class MeterService:
             raise PolarRequestValidationError(errors)
 
         update_dict = meter_update.model_dump(
-            by_alias=True, exclude_unset=True, exclude={"filter", "aggregation"}
+            by_alias=True,
+            exclude_unset=True,
+            exclude={"filter", "aggregation", "is_archived"},
         )
         if meter_update.filter is not None:
             update_dict["filter"] = meter_update.filter
         if meter_update.aggregation is not None:
             update_dict["aggregation"] = meter_update.aggregation
+
+        # Handle archiving/unarchiving
+        if meter_update.is_archived is not None:
+            if meter_update.is_archived:
+                meter = await self.archive(session, meter)
+            else:
+                meter = await self.unarchive(session, meter)
+            return meter
 
         return await repository.update(meter, update_dict=update_dict)
 
@@ -189,8 +206,15 @@ class MeterService:
         )
 
         if active_prices and active_prices > 0:
-            raise CannotArchiveError(
-                "Cannot archive meter that is still attached to active products"
+            raise PolarRequestValidationError(
+                [
+                    {
+                        "type": "value_error",
+                        "loc": ("body", "is_archived"),
+                        "msg": "Cannot archive meter that is still attached to active products",
+                        "input": True,
+                    }
+                ]
             )
 
         # Check if meter is referenced by any active Benefits with meter_credit type
@@ -203,12 +227,19 @@ class MeterService:
         )
 
         if active_benefits and active_benefits > 0:
-            raise CannotArchiveError(
-                "Cannot archive meter that is still referenced by active benefits"
+            raise PolarRequestValidationError(
+                [
+                    {
+                        "type": "value_error",
+                        "loc": ("body", "is_archived"),
+                        "msg": "Cannot archive meter that is still referenced by active benefits",
+                        "input": True,
+                    }
+                ]
             )
 
         repository = MeterRepository.from_session(session)
-        meter.archived_at = datetime.now(UTC)
+        meter.archived_at = datetime.now()
         return await repository.update(
             meter, update_dict={"archived_at": meter.archived_at}
         )

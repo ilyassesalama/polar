@@ -5,7 +5,7 @@ import pytest_asyncio
 
 from polar.auth.models import AuthSubject
 from polar.enums import SubscriptionRecurringInterval
-from polar.meter.service import CannotArchiveError
+from polar.exceptions import PolarRequestValidationError
 from polar.meter.service import meter as meter_service
 from polar.models import Benefit, Customer, Meter, Organization, Product, Subscription
 from polar.models.benefit import BenefitType
@@ -64,11 +64,11 @@ class TestMeterArchive:
         auth_subject: AuthSubject[Organization],
     ) -> None:
         # Try to archive meter that's attached to an active product
-        with pytest.raises(
-            CannotArchiveError,
-            match="Cannot archive meter that is still attached to active products",
-        ):
+        with pytest.raises(PolarRequestValidationError) as exc:
             await meter_service.archive(session, meter)
+        assert "Cannot archive meter that is still attached to active products" in str(
+            exc.value
+        )
 
     async def test_archive_with_archived_product_price(
         self,
@@ -107,11 +107,12 @@ class TestMeterArchive:
         await save_fixture(benefit)
 
         # Try to archive meter that's referenced by an active benefit
-        with pytest.raises(
-            CannotArchiveError,
-            match="Cannot archive meter that is still referenced by active benefits",
-        ):
+        with pytest.raises(PolarRequestValidationError) as exc:
             await meter_service.archive(session, meter)
+        assert (
+            "Cannot archive meter that is still referenced by active benefits"
+            in str(exc.value)
+        )
 
     async def test_unarchive_success(
         self,
