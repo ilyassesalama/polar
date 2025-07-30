@@ -793,6 +793,7 @@ interface CheckoutFormProps {
   ) => Promise<CheckoutPublicConfirmed>
   loading: boolean
   loadingLabel: string | undefined
+  disabled?: boolean
   theme?: 'light' | 'dark'
   themePreset: ThemingPresetProps
 }

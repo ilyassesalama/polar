@@ -276,6 +276,12 @@ class CheckoutService:
         if product.organization.is_blocked():
             raise NotPermitted()
 
+        # Check if organization is ready to accept payments
+        if not product.organization.is_payment_ready():
+            raise NotPermitted(
+                "Organization is not ready to accept payments. Setup must be completed first."
+            )
+
         if checkout_create.amount is not None and is_custom_price(price):
             if (
                 price.minimum_amount is not None
@@ -854,6 +860,14 @@ class CheckoutService:
                 ) is not None:
                     intent_metadata["tax_state"] = state
 
+                # Update checkout status to confirmed BEFORE creating the payment intent
+                # This prevents race conditions where Stripe webhook arrives before we save the status
+                checkout.status = CheckoutStatus.confirmed
+                session.add(checkout)
+                await (
+                    session.flush()
+                )  # Ensure the status is persisted before creating payment intent
+
                 intent: stripe_lib.PaymentIntent | stripe_lib.SetupIntent
                 try:
                     if checkout.is_payment_required:
@@ -892,6 +906,11 @@ class CheckoutService:
                             **setup_intent_params
                         )
                 except stripe_lib.StripeError as e:
+                    # If payment intent creation fails, revert checkout status
+                    checkout.status = CheckoutStatus.open
+                    session.add(checkout)
+                    await session.flush()
+
                     error = e.error
                     error_type = error.type if error is not None else None
                     error_message = error.message if error is not None else None
@@ -902,12 +921,15 @@ class CheckoutService:
                         "intent_client_secret": intent.client_secret,
                         "intent_status": intent.status,
                     }
+                    session.add(checkout)
 
         if not checkout.is_payment_form_required:
-            enqueue_job("checkout.handle_free_success", checkout_id=checkout.id)
+            # Update checkout status before enqueuing the job
+            checkout.status = CheckoutStatus.confirmed
+            session.add(checkout)
+            await session.flush()
 
-        checkout.status = CheckoutStatus.confirmed
-        session.add(checkout)
+            enqueue_job("checkout.handle_free_success", checkout_id=checkout.id)
 
         await self._after_checkout_updated(session, checkout)
 
@@ -1817,6 +1839,12 @@ class CheckoutService:
             product,
             {"organization", "prices", "product_medias", "attached_custom_fields"},
         )
+        # Load organization account if needed for payment readiness check
+        if product.organization and product.organization.account_id:
+            await session.refresh(
+                product.organization,
+                {"account"},
+            )
         return product
 
 

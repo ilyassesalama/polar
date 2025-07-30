@@ -1,6 +1,7 @@
 'use client'
 
 import LogoIcon from '@/components/Brand/LogoIcon'
+import OrganizationSetupBanner from '@/components/Dashboard/OrganizationSetupBanner'
 import { DashboardBody } from '@/components/Layout/DashboardLayout'
 import MetricChartBox from '@/components/Metrics/MetricChartBox'
 import { AccountWidget } from '@/components/Widgets/AccountWidget'
@@ -89,6 +90,7 @@ export default function OverviewPage({ organization }: OverviewPageProps) {
 
   return (
     <DashboardBody className="gap-y-8 pb-16 md:gap-y-12">
+      <OrganizationSetupBanner organization={organization} />
       <div className="dark:bg-polar-900 dark:border-polar-800 flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-3 text-sm md:hidden">
         <LogoIcon size={24} />
         <span>Polar for iOS is now available on TestFlight!</span>

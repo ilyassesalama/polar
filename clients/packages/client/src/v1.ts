@@ -562,6 +562,28 @@ export interface paths {
         patch: operations["organizations:set_account"];
         trace?: never;
     };
+    "/v1/organizations/{id}/payment-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Organization Payment Status
+         * @description Get the payment readiness status for an organization.
+         *
+         *     **Scopes**: `organizations:read` `organizations:write`
+         */
+        get: operations["organizations:get_organization_payment_status"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/organizations/{id}/members": {
         parameters: {
             query?: never;
@@ -7237,6 +7259,11 @@ export interface components {
             organization: components["schemas"]["Organization"];
             /** Attached Custom Fields */
             attached_custom_fields: components["schemas"]["AttachedCustomField"][];
+            /**
+             * Organization Payment Ready
+             * @description Whether the organization is ready to accept payments.
+             */
+            organization_payment_ready: boolean;
         };
         /**
          * CheckoutPublicConfirmed
@@ -7432,6 +7459,11 @@ export interface components {
             organization: components["schemas"]["Organization"];
             /** Attached Custom Fields */
             attached_custom_fields: components["schemas"]["AttachedCustomField"][];
+            /**
+             * Organization Payment Ready
+             * @description Whether the organization is ready to accept payments.
+             */
+            organization_payment_ready: boolean;
             /** Customer Session Token */
             customer_session_token: string;
         };
@@ -14014,6 +14046,34 @@ export interface components {
             /** New Subscription */
             new_subscription: boolean;
         };
+        /** OrganizationPaymentStatus */
+        OrganizationPaymentStatus: {
+            /**
+             * Payment Ready
+             * @description Whether the organization can accept payments
+             */
+            payment_ready: boolean;
+            /**
+             * Missing Steps
+             * @description List of missing setup steps
+             */
+            missing_steps: string[];
+            /**
+             * Organization Status
+             * @description Current organization status
+             */
+            organization_status: string;
+            /**
+             * Account Status
+             * @description Current account status if account exists
+             */
+            account_status: string | null;
+            /**
+             * Identity Verification Status
+             * @description Identity verification status of the user
+             */
+            identity_verification_status: string;
+        };
         /** OrganizationProfileSettings */
         OrganizationProfileSettings: {
             /**
@@ -18049,6 +18109,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["NotPermitted"];
+                };
+            };
+            /** @description Organization not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResourceNotFound"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    "organizations:get_organization_payment_status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrganizationPaymentStatus"];
                 };
             };
             /** @description Organization not found. */

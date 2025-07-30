@@ -549,6 +549,9 @@ class CheckoutPublic(CheckoutBase):
     discount: CheckoutDiscount | None
     organization: Organization
     attached_custom_fields: list[AttachedCustomField]
+    organization_payment_ready: bool = Field(
+        description="Whether the organization is ready to accept payments."
+    )
 
 
 class CheckoutPublicConfirmed(CheckoutPublic):

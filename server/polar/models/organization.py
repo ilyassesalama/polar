@@ -1,5 +1,6 @@
 from datetime import datetime
 from enum import StrEnum
+from logging import Logger
 from typing import TYPE_CHECKING, Any, TypedDict
 from uuid import UUID
 
@@ -17,6 +18,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import CITEXT, JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, declared_attr, mapped_column, relationship
+from structlog import get_logger
 
 from polar.config import settings
 from polar.enums import SubscriptionProrationBehavior
@@ -25,8 +27,10 @@ from polar.kit.extensions.sqlalchemy import StringEnum
 
 from .account import Account
 
+log: Logger = get_logger(__name__)
 if TYPE_CHECKING:
     from .product import Product
+    from .user import User
 
 
 class OrganizationSocials(TypedDict):
@@ -239,6 +243,68 @@ class Organization(RecordModel):
 
     def is_active(self) -> bool:
         return self.status == Organization.Status.ACTIVE
+
+    def is_payment_ready(self) -> bool:
+        """Check if organization can accept payments"""
+        # Organization must be active
+        if (
+            self.status != Organization.Status.ACTIVE
+            and self.status != Organization.Status.UNDER_REVIEW
+        ):
+            log.info(
+                "Organization is not active or under review %s",
+                {"organization_id": self.id, "status": self.status},
+            )
+            return False
+
+        # Must have at least one product
+        if not self.products:
+            log.info(
+                "Organization has no products",
+                {"organization_id": self.id},
+            )
+            return False
+
+        # Must have an active payout account (includes integration setup)
+        if not self.account_id or not self.account:
+            log.info(
+                "Organization does not have an active payout account",
+                {"organization_id": self.id},
+            )
+            return False
+
+        if self.account and not self.account.is_payout_ready():
+            log.info(
+                "Organization payout account is not ready",
+                {"organization_id": self.id, "account_id": self.account_id},
+            )
+            return False
+
+        log.info(
+            "Organization is payment ready",
+            {
+                "organization_id": self.id,
+                "status": self.status,
+                "has_products": len(self.products) > 0,
+                "account_id": self.account_id,
+            },
+        )
+        return True
+
+    def get_missing_steps(self, user: "User | None" = None) -> list[str]:
+        """Get list of missing setup steps"""
+        missing = []
+
+        # Step 1: Create a Product
+        missing.append("create_product")
+
+        # Step 2: Integrate Polar (represented by having a payout account setup)
+        missing.append("integrate_polar")
+
+        # Step 3: Complete Account Setup (payout readiness)
+        missing.append("complete_account_setup")
+
+        return missing
 
     @property
     def statement_descriptor(self) -> str:

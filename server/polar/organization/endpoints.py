@@ -1,6 +1,9 @@
 import datetime
+from logging import Logger
 
+import structlog
 from fastapi import Depends, Query, Response, status
+from sqlalchemy.orm import joinedload
 
 from polar.account.schemas import Account as AccountSchema
 from polar.account.service import account as account_service
@@ -11,6 +14,7 @@ from polar.exceptions import NotPermitted, ResourceNotFound
 from polar.kit.pagination import ListResource, Pagination, PaginationParamsQuery
 from polar.models import Account, Organization
 from polar.openapi import APITag
+from polar.organization.repository import OrganizationRepository
 from polar.postgres import AsyncSession, get_db_session
 from polar.routing import APIRouter
 from polar.user.service import user as user_service
@@ -24,13 +28,14 @@ from .schemas import Organization as OrganizationSchema
 from .schemas import (
     OrganizationCreate,
     OrganizationID,
+    OrganizationPaymentStatus,
     OrganizationSetAccount,
     OrganizationUpdate,
 )
 from .service import organization as organization_service
 
 router = APIRouter(prefix="/organizations", tags=["organizations"])
-
+log: Logger = structlog.get_logger()
 OrganizationNotFound = {
     "description": "Organization not found.",
     "model": ResourceNotFound.schema(),
@@ -195,6 +200,64 @@ async def set_account(
 
     return await organization_service.set_account(
         session, auth_subject, organization, set_account.account_id
+    )
+
+
+@router.get(
+    "/{id}/payment-status",
+    response_model=OrganizationPaymentStatus,
+    summary="Get Organization Payment Status",
+    responses={
+        404: OrganizationNotFound,
+    },
+    tags=[APITag.private],
+)
+async def get_organization_payment_status(
+    id: OrganizationID,
+    auth_subject: auth.OrganizationsRead,
+    session: AsyncSession = Depends(get_db_session),
+) -> OrganizationPaymentStatus:
+    """Get the payment readiness status for an organization."""
+    # First check if organization exists and user has access
+    organization = await organization_service.get(session, auth_subject, id)
+    if organization is None:
+        raise ResourceNotFound()
+
+    # Now get the organization with account relationship loaded
+    repository = OrganizationRepository.from_session(session)
+    organization_with_account = await repository.get_by_id(
+        id, options=(joinedload(Organization.account),)
+    )
+
+    if organization_with_account is None:
+        raise ResourceNotFound()
+
+    # Get the authenticated user (only if it's actually a User)
+    from polar.models.user import User
+
+    user = (
+        auth_subject.subject
+        if hasattr(auth_subject, "subject") and isinstance(auth_subject.subject, User)
+        else None
+    )
+
+    missing_steps = organization_with_account.get_missing_steps(user)
+    log.info(
+        f"Organization {organization_with_account.id} payment readiness check: "
+        f"missing steps: {missing_steps}, "
+        f"status: {organization_with_account.status}, "
+        f"account status: {organization_with_account.account.status if organization_with_account.account else 'None'}"
+    )
+    return OrganizationPaymentStatus(
+        payment_ready=organization_with_account.is_payment_ready(),
+        missing_steps=missing_steps,
+        organization_status=organization_with_account.status.value,
+        account_status=organization_with_account.account.status.value
+        if organization_with_account.account
+        else None,
+        identity_verification_status=user.identity_verification_status.value
+        if user and hasattr(user, "identity_verification_status")
+        else "unverified",
     )
 
 

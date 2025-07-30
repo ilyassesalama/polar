@@ -107,6 +107,19 @@ export const useOrganizationAccount = (id?: string) =>
     enabled: !!id,
   })
 
+export const useOrganizationPaymentStatus = (id?: string) =>
+  useQuery({
+    queryKey: ['organizations', 'payment-status', id],
+    queryFn: () =>
+      unwrap(
+        api.GET('/v1/organizations/{id}/payment-status', {
+          params: { path: { id: id ?? '' } },
+        }),
+      ),
+    retry: defaultRetry,
+    enabled: !!id,
+  })
+
 export const useOrganizationAccessTokens = (
   organization_id: string,
   params?: Omit<

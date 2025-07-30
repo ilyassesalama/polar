@@ -1,6 +1,7 @@
 'use client'
 
 import { useCheckoutConfirmedRedirect } from '@/hooks/checkout'
+import { ExclamationCircleIcon } from '@heroicons/react/20/solid'
 import {
   CheckoutForm,
   CheckoutProductSwitcher,
@@ -16,6 +17,7 @@ import { ExpiredCheckoutError } from '@polar-sh/sdk/models/errors/expiredcheckou
 import ShadowBox, {
   ShadowBoxOnMd,
 } from '@polar-sh/ui/components/atoms/ShadowBox'
+import Banner from '@polar-sh/ui/components/molecules/Banner'
 import { useThemePreset } from '@polar-sh/ui/hooks/theming'
 import type { Stripe, StripeElements } from '@stripe/stripe-js'
 import { useTheme } from 'next-themes'
@@ -109,6 +111,17 @@ const Checkout = ({ embed: _embed, theme: _theme }: CheckoutProps) => {
     [_confirm, checkout, checkoutConfirmedRedirect],
   )
 
+  // Component to show when organization is not ready for payments
+  const OrganizationNotReadyBanner = () => (
+    <Banner color="red">
+      <ExclamationCircleIcon className="h-5 w-5" />
+      <span className="text-sm">
+        This organization is not yet ready to accept payments. The merchant
+        needs to complete their account setup first.
+      </span>
+    </Banner>
+  )
+
   if (embed) {
     return (
       <ShadowBox
@@ -117,11 +130,21 @@ const Checkout = ({ embed: _embed, theme: _theme }: CheckoutProps) => {
           'flex flex-col gap-y-12 overflow-hidden',
         )}
       >
+        {(checkout as any).organizationPaymentReady === false && (
+          <OrganizationNotReadyBanner />
+        )}
+
+        <CheckoutProductInfo
+          organization={checkout.organization}
+          product={checkout.product}
+        />
+
         <CheckoutProductSwitcher
           checkout={checkout}
           update={update}
           themePreset={themePreset}
         />
+
         {checkout.productPrice.amountType === 'custom' && (
           <CheckoutPWYWForm
             checkout={checkout}
@@ -130,6 +153,7 @@ const Checkout = ({ embed: _embed, theme: _theme }: CheckoutProps) => {
             themePreset={themePreset}
           />
         )}
+
         <CheckoutForm
           form={form}
           checkout={checkout}
@@ -139,9 +163,16 @@ const Checkout = ({ embed: _embed, theme: _theme }: CheckoutProps) => {
           loadingLabel={label}
           theme={theme}
           themePreset={themePreset}
+          disabled={(checkout as any).organizationPaymentReady === false}
         />
       </ShadowBox>
     )
+  }
+
+  var banner = null
+
+  if ((checkout as any).organizationPaymentReady === false) {
+    banner = <OrganizationNotReadyBanner />
   }
 
   return (
@@ -157,6 +188,8 @@ const Checkout = ({ embed: _embed, theme: _theme }: CheckoutProps) => {
           'flex flex-col gap-y-8 md:p-12',
         )}
       >
+        {banner}
+
         <CheckoutProductInfo
           organization={checkout.organization}
           product={checkout.product}
@@ -190,6 +223,7 @@ const Checkout = ({ embed: _embed, theme: _theme }: CheckoutProps) => {
           loadingLabel={label}
           theme={theme}
           themePreset={themePreset}
+          disabled={(checkout as any).organizationPaymentReady === false}
         />
       </div>
     </ShadowBoxOnMd>

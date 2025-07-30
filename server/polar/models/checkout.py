@@ -16,6 +16,7 @@ from sqlalchemy import (
     event,
 )
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, Mapper, declared_attr, mapped_column, relationship
@@ -340,6 +341,39 @@ class Checkout(CustomFieldDataMixin, MetadataMixin, RecordModel):
             if require_billing_address
             else BillingAddressFieldMode.disabled,
         }
+
+    @property
+    def organization_payment_ready(self) -> bool:
+        """Check if the organization is ready to accept payments."""
+        if not self.product or not self.product.organization:
+            return False
+
+        organization = self.product.organization
+
+        # Basic checks that don't require account relationship
+        if organization.status not in (
+            Organization.Status.ACTIVE,
+            Organization.Status.UNDER_REVIEW,
+        ):
+            return False
+
+        if not organization.details or not organization.details_submitted_at:
+            return False
+
+        if not organization.account_id:
+            return False
+
+        # If we can't check account status due to lazy loading, assume not ready
+        # This will be properly checked during actual payment processing
+        try:
+            if organization.account and not organization.account.is_payout_ready():
+                return False
+        except InvalidRequestError:
+            # If we can't access account due to lazy loading, return False
+            # The actual payment readiness will be checked properly during checkout creation
+            return False
+
+        return True
 
 
 @event.listens_for(Checkout, "before_update")

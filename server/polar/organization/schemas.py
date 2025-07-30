@@ -298,6 +298,20 @@ class RepositoryBadgeSettingsUpdate(Schema):
     retroactive: bool
 
 
+class OrganizationPaymentStatus(Schema):
+    payment_ready: bool = Field(
+        description="Whether the organization can accept payments"
+    )
+    missing_steps: list[str] = Field(description="List of missing setup steps")
+    organization_status: str = Field(description="Current organization status")
+    account_status: str | None = Field(
+        description="Current account status if account exists"
+    )
+    identity_verification_status: str = Field(
+        description="Identity verification status of the user"
+    )
+
+
 # Internal model
 class RepositoryBadgeSettingsRead(Schema):
     id: UUID4
