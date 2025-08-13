@@ -1327,26 +1327,29 @@
         },
         "x-speakeasy-group": "oauth2",
         "x-speakeasy-name-override": "token",
+        "security": [
+          {}
+        ],
         "x-codeSamples": [
           {
             "lang": "go",
             "label": "Go (SDK)",
-            "source": "package main\n\nimport(\n\t\"context\"\n\t\"os\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"github.com/polarsource/polar-go/models/components\"\n\t\"github.com/polarsource/polar-go/models/operations\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New(\n        polargo.WithSecurity(os.Getenv(\"POLAR_ACCESS_TOKEN\")),\n    )\n\n    res, err := s.Oauth2.Token(ctx, operations.CreateOauth2RequestTokenRequestBodyAuthorizationCodeTokenRequest(\n        components.AuthorizationCodeTokenRequest{\n            ClientID: \"<id>\",\n            ClientSecret: \"<value>\",\n            Code: \"<value>\",\n            RedirectURI: \"https://memorable-season.name\",\n        },\n    ))\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.TokenResponse != nil {\n        // handle response\n    }\n}"
+            "source": "package main\n\nimport(\n\t\"context\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"github.com/polarsource/polar-go/models/components\"\n\t\"github.com/polarsource/polar-go/models/operations\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New()\n\n    res, err := s.Oauth2.Token(ctx, operations.CreateOauth2RequestTokenRequestBodyAuthorizationCodeTokenRequest(\n        components.AuthorizationCodeTokenRequest{\n            ClientID: \"<id>\",\n            ClientSecret: \"<value>\",\n            Code: \"<value>\",\n            RedirectURI: \"https://memorable-season.name\",\n        },\n    ))\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.TokenResponse != nil {\n        // handle response\n    }\n}"
           },
           {
             "lang": "python",
             "label": "Python (SDK)",
-            "source": "from polar_sdk import Polar\n\n\nwith Polar(\n    access_token=\"<YOUR_BEARER_TOKEN_HERE>\",\n) as polar:\n\n    res = polar.oauth2.token(request={\n        \"grant_type\": \"authorization_code\",\n        \"client_id\": \"<id>\",\n        \"client_secret\": \"<value>\",\n        \"code\": \"<value>\",\n        \"redirect_uri\": \"https://memorable-season.name\",\n    })\n\n    # Handle response\n    print(res)"
+            "source": "from polar_sdk import Polar\n\n\nwith Polar() as polar:\n\n    res = polar.oauth2.token(request={\n        \"grant_type\": \"authorization_code\",\n        \"client_id\": \"<id>\",\n        \"client_secret\": \"<value>\",\n        \"code\": \"<value>\",\n        \"redirect_uri\": \"https://memorable-season.name\",\n    })\n\n    # Handle response\n    print(res)"
           },
           {
             "lang": "typescript",
             "label": "Typescript (SDK)",
-            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar({\n  accessToken: process.env[\"POLAR_ACCESS_TOKEN\"] ?? \"\",\n});\n\nasync function run() {\n  const result = await polar.oauth2.token({\n    grantType: \"authorization_code\",\n    clientId: \"<id>\",\n    clientSecret: \"<value>\",\n    code: \"<value>\",\n    redirectUri: \"https://memorable-season.name\",\n  });\n\n  console.log(result);\n}\n\nrun();"
+            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar();\n\nasync function run() {\n  const result = await polar.oauth2.token({\n    grantType: \"authorization_code\",\n    clientId: \"<id>\",\n    clientSecret: \"<value>\",\n    code: \"<value>\",\n    redirectUri: \"https://memorable-season.name\",\n  });\n\n  console.log(result);\n}\n\nrun();"
           },
           {
             "lang": "php",
             "label": "PHP (SDK)",
-            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\nuse Polar\\Models\\Components;\n\n$sdk = Polar\\Polar::builder()\n    ->setSecurity(\n        '<YOUR_BEARER_TOKEN_HERE>'\n    )\n    ->build();\n\n$request = new Components\\AuthorizationCodeTokenRequest(\n    clientId: '<id>',\n    clientSecret: '<value>',\n    code: '<value>',\n    redirectUri: 'https://memorable-season.name',\n);\n\n$response = $sdk->oauth2->token(\n    request: $request\n);\n\nif ($response->tokenResponse !== null) {\n    // handle response\n}"
+            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\nuse Polar\\Models\\Components;\n\n$sdk = Polar\\Polar::builder()->build();\n\n$request = new Components\\AuthorizationCodeTokenRequest(\n    clientId: '<id>',\n    clientSecret: '<value>',\n    code: '<value>',\n    redirectUri: 'https://memorable-season.name',\n);\n\n$response = $sdk->oauth2->token(\n    request: $request\n);\n\nif ($response->tokenResponse !== null) {\n    // handle response\n}"
           }
         ]
       }
@@ -1388,26 +1391,29 @@
         },
         "x-speakeasy-group": "oauth2",
         "x-speakeasy-name-override": "revoke",
+        "security": [
+          {}
+        ],
         "x-codeSamples": [
           {
             "lang": "go",
             "label": "Go (SDK)",
-            "source": "package main\n\nimport(\n\t\"context\"\n\t\"os\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"github.com/polarsource/polar-go/models/components\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New(\n        polargo.WithSecurity(os.Getenv(\"POLAR_ACCESS_TOKEN\")),\n    )\n\n    res, err := s.Oauth2.Revoke(ctx, components.RevokeTokenRequest{\n        Token: \"<value>\",\n        ClientID: \"<id>\",\n        ClientSecret: \"<value>\",\n    })\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.RevokeTokenResponse != nil {\n        // handle response\n    }\n}"
+            "source": "package main\n\nimport(\n\t\"context\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"github.com/polarsource/polar-go/models/components\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New()\n\n    res, err := s.Oauth2.Revoke(ctx, components.RevokeTokenRequest{\n        Token: \"<value>\",\n        ClientID: \"<id>\",\n        ClientSecret: \"<value>\",\n    })\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.RevokeTokenResponse != nil {\n        // handle response\n    }\n}"
           },
           {
             "lang": "python",
             "label": "Python (SDK)",
-            "source": "from polar_sdk import Polar\n\n\nwith Polar(\n    access_token=\"<YOUR_BEARER_TOKEN_HERE>\",\n) as polar:\n\n    res = polar.oauth2.revoke(request={\n        \"token\": \"<value>\",\n        \"client_id\": \"<id>\",\n        \"client_secret\": \"<value>\",\n    })\n\n    # Handle response\n    print(res)"
+            "source": "from polar_sdk import Polar\n\n\nwith Polar() as polar:\n\n    res = polar.oauth2.revoke(request={\n        \"token\": \"<value>\",\n        \"client_id\": \"<id>\",\n        \"client_secret\": \"<value>\",\n    })\n\n    # Handle response\n    print(res)"
           },
           {
             "lang": "typescript",
             "label": "Typescript (SDK)",
-            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar({\n  accessToken: process.env[\"POLAR_ACCESS_TOKEN\"] ?? \"\",\n});\n\nasync function run() {\n  const result = await polar.oauth2.revoke({\n    token: \"<value>\",\n    clientId: \"<id>\",\n    clientSecret: \"<value>\",\n  });\n\n  console.log(result);\n}\n\nrun();"
+            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar();\n\nasync function run() {\n  const result = await polar.oauth2.revoke({\n    token: \"<value>\",\n    clientId: \"<id>\",\n    clientSecret: \"<value>\",\n  });\n\n  console.log(result);\n}\n\nrun();"
           },
           {
             "lang": "php",
             "label": "PHP (SDK)",
-            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\nuse Polar\\Models\\Components;\n\n$sdk = Polar\\Polar::builder()\n    ->setSecurity(\n        '<YOUR_BEARER_TOKEN_HERE>'\n    )\n    ->build();\n\n$request = new Components\\RevokeTokenRequest(\n    token: '<value>',\n    clientId: '<id>',\n    clientSecret: '<value>',\n);\n\n$response = $sdk->oauth2->revoke(\n    request: $request\n);\n\nif ($response->revokeTokenResponse !== null) {\n    // handle response\n}"
+            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\nuse Polar\\Models\\Components;\n\n$sdk = Polar\\Polar::builder()->build();\n\n$request = new Components\\RevokeTokenRequest(\n    token: '<value>',\n    clientId: '<id>',\n    clientSecret: '<value>',\n);\n\n$response = $sdk->oauth2->revoke(\n    request: $request\n);\n\nif ($response->revokeTokenResponse !== null) {\n    // handle response\n}"
           }
         ]
       }
@@ -1449,26 +1455,29 @@
         },
         "x-speakeasy-group": "oauth2",
         "x-speakeasy-name-override": "introspect",
+        "security": [
+          {}
+        ],
         "x-codeSamples": [
           {
             "lang": "go",
             "label": "Go (SDK)",
-            "source": "package main\n\nimport(\n\t\"context\"\n\t\"os\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"github.com/polarsource/polar-go/models/components\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New(\n        polargo.WithSecurity(os.Getenv(\"POLAR_ACCESS_TOKEN\")),\n    )\n\n    res, err := s.Oauth2.Introspect(ctx, components.IntrospectTokenRequest{\n        Token: \"<value>\",\n        ClientID: \"<id>\",\n        ClientSecret: \"<value>\",\n    })\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.IntrospectTokenResponse != nil {\n        // handle response\n    }\n}"
+            "source": "package main\n\nimport(\n\t\"context\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"github.com/polarsource/polar-go/models/components\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New()\n\n    res, err := s.Oauth2.Introspect(ctx, components.IntrospectTokenRequest{\n        Token: \"<value>\",\n        ClientID: \"<id>\",\n        ClientSecret: \"<value>\",\n    })\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.IntrospectTokenResponse != nil {\n        // handle response\n    }\n}"
           },
           {
             "lang": "python",
             "label": "Python (SDK)",
-            "source": "from polar_sdk import Polar\n\n\nwith Polar(\n    access_token=\"<YOUR_BEARER_TOKEN_HERE>\",\n) as polar:\n\n    res = polar.oauth2.introspect(request={\n        \"token\": \"<value>\",\n        \"client_id\": \"<id>\",\n        \"client_secret\": \"<value>\",\n    })\n\n    # Handle response\n    print(res)"
+            "source": "from polar_sdk import Polar\n\n\nwith Polar() as polar:\n\n    res = polar.oauth2.introspect(request={\n        \"token\": \"<value>\",\n        \"client_id\": \"<id>\",\n        \"client_secret\": \"<value>\",\n    })\n\n    # Handle response\n    print(res)"
           },
           {
             "lang": "typescript",
             "label": "Typescript (SDK)",
-            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar({\n  accessToken: process.env[\"POLAR_ACCESS_TOKEN\"] ?? \"\",\n});\n\nasync function run() {\n  const result = await polar.oauth2.introspect({\n    token: \"<value>\",\n    clientId: \"<id>\",\n    clientSecret: \"<value>\",\n  });\n\n  console.log(result);\n}\n\nrun();"
+            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar();\n\nasync function run() {\n  const result = await polar.oauth2.introspect({\n    token: \"<value>\",\n    clientId: \"<id>\",\n    clientSecret: \"<value>\",\n  });\n\n  console.log(result);\n}\n\nrun();"
           },
           {
             "lang": "php",
             "label": "PHP (SDK)",
-            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\nuse Polar\\Models\\Components;\n\n$sdk = Polar\\Polar::builder()\n    ->setSecurity(\n        '<YOUR_BEARER_TOKEN_HERE>'\n    )\n    ->build();\n\n$request = new Components\\IntrospectTokenRequest(\n    token: '<value>',\n    clientId: '<id>',\n    clientSecret: '<value>',\n);\n\n$response = $sdk->oauth2->introspect(\n    request: $request\n);\n\nif ($response->introspectTokenResponse !== null) {\n    // handle response\n}"
+            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\nuse Polar\\Models\\Components;\n\n$sdk = Polar\\Polar::builder()->build();\n\n$request = new Components\\IntrospectTokenRequest(\n    token: '<value>',\n    clientId: '<id>',\n    clientSecret: '<value>',\n);\n\n$response = $sdk->oauth2->introspect(\n    request: $request\n);\n\nif ($response->introspectTokenResponse !== null) {\n    // handle response\n}"
           }
         ]
       }
@@ -5491,7 +5500,7 @@
             }
           },
           "403": {
-            "description": "The checkout is expired or the customer already has an active subscription.",
+            "description": "The checkout is expired, the customer already has an active subscription, or the organization is not ready to accept payments.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5614,26 +5623,29 @@
         },
         "x-speakeasy-group": "checkouts",
         "x-speakeasy-name-override": "client_get",
+        "security": [
+          {}
+        ],
         "x-codeSamples": [
           {
             "lang": "go",
             "label": "Go (SDK)",
-            "source": "package main\n\nimport(\n\t\"context\"\n\t\"os\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New(\n        polargo.WithSecurity(os.Getenv(\"POLAR_ACCESS_TOKEN\")),\n    )\n\n    res, err := s.Checkouts.ClientGet(ctx, \"<value>\")\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.CheckoutPublic != nil {\n        // handle response\n    }\n}"
+            "source": "package main\n\nimport(\n\t\"context\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New()\n\n    res, err := s.Checkouts.ClientGet(ctx, \"<value>\")\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.CheckoutPublic != nil {\n        // handle response\n    }\n}"
           },
           {
             "lang": "python",
             "label": "Python (SDK)",
-            "source": "from polar_sdk import Polar\n\n\nwith Polar(\n    access_token=\"<YOUR_BEARER_TOKEN_HERE>\",\n) as polar:\n\n    res = polar.checkouts.client_get(client_secret=\"<value>\")\n\n    # Handle response\n    print(res)"
+            "source": "from polar_sdk import Polar\n\n\nwith Polar() as polar:\n\n    res = polar.checkouts.client_get(client_secret=\"<value>\")\n\n    # Handle response\n    print(res)"
           },
           {
             "lang": "typescript",
             "label": "Typescript (SDK)",
-            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar({\n  accessToken: process.env[\"POLAR_ACCESS_TOKEN\"] ?? \"\",\n});\n\nasync function run() {\n  const result = await polar.checkouts.clientGet({\n    clientSecret: \"<value>\",\n  });\n\n  console.log(result);\n}\n\nrun();"
+            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar();\n\nasync function run() {\n  const result = await polar.checkouts.clientGet({\n    clientSecret: \"<value>\",\n  });\n\n  console.log(result);\n}\n\nrun();"
           },
           {
             "lang": "php",
             "label": "PHP (SDK)",
-            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\n\n$sdk = Polar\\Polar::builder()\n    ->setSecurity(\n        '<YOUR_BEARER_TOKEN_HERE>'\n    )\n    ->build();\n\n\n\n$response = $sdk->checkouts->clientGet(\n    clientSecret: '<value>'\n);\n\nif ($response->checkoutPublic !== null) {\n    // handle response\n}"
+            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\n\n$sdk = Polar\\Polar::builder()->build();\n\n\n\n$response = $sdk->checkouts->clientGet(\n    clientSecret: '<value>'\n);\n\nif ($response->checkoutPublic !== null) {\n    // handle response\n}"
           }
         ]
       },
@@ -5691,7 +5703,7 @@
             }
           },
           "403": {
-            "description": "The checkout is expired or the customer already has an active subscription.",
+            "description": "The checkout is expired, the customer already has an active subscription, or the organization is not ready to accept payments.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5726,26 +5738,29 @@
         },
         "x-speakeasy-group": "checkouts",
         "x-speakeasy-name-override": "client_update",
+        "security": [
+          {}
+        ],
         "x-codeSamples": [
           {
             "lang": "go",
             "label": "Go (SDK)",
-            "source": "package main\n\nimport(\n\t\"context\"\n\t\"os\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"github.com/polarsource/polar-go/models/components\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New(\n        polargo.WithSecurity(os.Getenv(\"POLAR_ACCESS_TOKEN\")),\n    )\n\n    res, err := s.Checkouts.ClientUpdate(ctx, \"<value>\", components.CheckoutUpdatePublic{\n        CustomerBillingAddress: nil,\n    })\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.CheckoutPublic != nil {\n        // handle response\n    }\n}"
+            "source": "package main\n\nimport(\n\t\"context\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"github.com/polarsource/polar-go/models/components\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New()\n\n    res, err := s.Checkouts.ClientUpdate(ctx, \"<value>\", components.CheckoutUpdatePublic{\n        CustomerBillingAddress: nil,\n    })\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.CheckoutPublic != nil {\n        // handle response\n    }\n}"
           },
           {
             "lang": "python",
             "label": "Python (SDK)",
-            "source": "from polar_sdk import Polar\n\n\nwith Polar(\n    access_token=\"<YOUR_BEARER_TOKEN_HERE>\",\n) as polar:\n\n    res = polar.checkouts.client_update(client_secret=\"<value>\", checkout_update_public={\n        \"customer_billing_address\": None,\n    })\n\n    # Handle response\n    print(res)"
+            "source": "from polar_sdk import Polar\n\n\nwith Polar() as polar:\n\n    res = polar.checkouts.client_update(client_secret=\"<value>\", checkout_update_public={\n        \"customer_billing_address\": None,\n    })\n\n    # Handle response\n    print(res)"
           },
           {
             "lang": "typescript",
             "label": "Typescript (SDK)",
-            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar({\n  accessToken: process.env[\"POLAR_ACCESS_TOKEN\"] ?? \"\",\n});\n\nasync function run() {\n  const result = await polar.checkouts.clientUpdate({\n    clientSecret: \"<value>\",\n    checkoutUpdatePublic: {\n      customerBillingAddress: null,\n    },\n  });\n\n  console.log(result);\n}\n\nrun();"
+            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar();\n\nasync function run() {\n  const result = await polar.checkouts.clientUpdate({\n    clientSecret: \"<value>\",\n    checkoutUpdatePublic: {\n      customerBillingAddress: null,\n    },\n  });\n\n  console.log(result);\n}\n\nrun();"
           },
           {
             "lang": "php",
             "label": "PHP (SDK)",
-            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\nuse Polar\\Models\\Components;\n\n$sdk = Polar\\Polar::builder()\n    ->setSecurity(\n        '<YOUR_BEARER_TOKEN_HERE>'\n    )\n    ->build();\n\n$checkoutUpdatePublic = new Components\\CheckoutUpdatePublic(\n    customerBillingAddress: null,\n);\n\n$response = $sdk->checkouts->clientUpdate(\n    clientSecret: '<value>',\n    checkoutUpdatePublic: $checkoutUpdatePublic\n\n);\n\nif ($response->checkoutPublic !== null) {\n    // handle response\n}"
+            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\nuse Polar\\Models\\Components;\n\n$sdk = Polar\\Polar::builder()->build();\n\n$checkoutUpdatePublic = new Components\\CheckoutUpdatePublic(\n    customerBillingAddress: null,\n);\n\n$response = $sdk->checkouts->clientUpdate(\n    clientSecret: '<value>',\n    checkoutUpdatePublic: $checkoutUpdatePublic\n\n);\n\nif ($response->checkoutPublic !== null) {\n    // handle response\n}"
           }
         ]
       }
@@ -5815,7 +5830,7 @@
             }
           },
           "403": {
-            "description": "The checkout is expired or the customer already has an active subscription.",
+            "description": "The checkout is expired, the customer already has an active subscription, or the organization is not ready to accept payments.",
             "content": {
               "application/json": {
                 "schema": {
@@ -11750,7 +11765,6 @@
         "summary": "Validate License Key",
         "description": "Validate a license key.",
         "operationId": "customer_portal:license_keys:validate",
-        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -11798,26 +11812,29 @@
         },
         "x-speakeasy-group": "customer_portal.license_keys",
         "x-speakeasy-name-override": "validate",
+        "security": [
+          {}
+        ],
         "x-codeSamples": [
           {
             "lang": "go",
             "label": "Go (SDK)",
-            "source": "package main\n\nimport(\n\t\"context\"\n\t\"os\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"github.com/polarsource/polar-go/models/components\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New(\n        polargo.WithSecurity(os.Getenv(\"POLAR_ACCESS_TOKEN\")),\n    )\n\n    res, err := s.CustomerPortal.LicenseKeys.Validate(ctx, components.LicenseKeyValidate{\n        Key: \"<key>\",\n        OrganizationID: \"<value>\",\n    })\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.ValidatedLicenseKey != nil {\n        // handle response\n    }\n}"
+            "source": "package main\n\nimport(\n\t\"context\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"github.com/polarsource/polar-go/models/components\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New()\n\n    res, err := s.CustomerPortal.LicenseKeys.Validate(ctx, components.LicenseKeyValidate{\n        Key: \"<key>\",\n        OrganizationID: \"<value>\",\n    })\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.ValidatedLicenseKey != nil {\n        // handle response\n    }\n}"
           },
           {
             "lang": "python",
             "label": "Python (SDK)",
-            "source": "from polar_sdk import Polar\n\n\nwith Polar(\n    access_token=\"<YOUR_BEARER_TOKEN_HERE>\",\n) as polar:\n\n    res = polar.customer_portal.license_keys.validate(request={\n        \"key\": \"<key>\",\n        \"organization_id\": \"<value>\",\n    })\n\n    # Handle response\n    print(res)"
+            "source": "from polar_sdk import Polar\n\n\nwith Polar() as polar:\n\n    res = polar.customer_portal.license_keys.validate(request={\n        \"key\": \"<key>\",\n        \"organization_id\": \"<value>\",\n    })\n\n    # Handle response\n    print(res)"
           },
           {
             "lang": "typescript",
             "label": "Typescript (SDK)",
-            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar({\n  accessToken: process.env[\"POLAR_ACCESS_TOKEN\"] ?? \"\",\n});\n\nasync function run() {\n  const result = await polar.customerPortal.licenseKeys.validate({\n    key: \"<key>\",\n    organizationId: \"<value>\",\n  });\n\n  console.log(result);\n}\n\nrun();"
+            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar();\n\nasync function run() {\n  const result = await polar.customerPortal.licenseKeys.validate({\n    key: \"<key>\",\n    organizationId: \"<value>\",\n  });\n\n  console.log(result);\n}\n\nrun();"
           },
           {
             "lang": "php",
             "label": "PHP (SDK)",
-            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\nuse Polar\\Models\\Components;\n\n$sdk = Polar\\Polar::builder()\n    ->setSecurity(\n        '<YOUR_BEARER_TOKEN_HERE>'\n    )\n    ->build();\n\n$request = new Components\\LicenseKeyValidate(\n    key: '<key>',\n    organizationId: '<value>',\n);\n\n$response = $sdk->customerPortal->licenseKeys->validate(\n    request: $request\n);\n\nif ($response->validatedLicenseKey !== null) {\n    // handle response\n}"
+            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\nuse Polar\\Models\\Components;\n\n$sdk = Polar\\Polar::builder()->build();\n\n$request = new Components\\LicenseKeyValidate(\n    key: '<key>',\n    organizationId: '<value>',\n);\n\n$response = $sdk->customerPortal->licenseKeys->validate(\n    request: $request\n);\n\nif ($response->validatedLicenseKey !== null) {\n    // handle response\n}"
           }
         ]
       }
@@ -11833,7 +11850,6 @@
         "summary": "Activate License Key",
         "description": "Activate a license key instance.",
         "operationId": "customer_portal:license_keys:activate",
-        "security": [],
         "requestBody": {
           "content": {
             "application/json": {
@@ -11856,7 +11872,7 @@
             }
           },
           "403": {
-            "description": "License key activation not required or permitted (limit reached).",
+            "description": "License key activation not supported or limit reached. Use /validate endpoint for licenses without activations.",
             "content": {
               "application/json": {
                 "schema": {
@@ -11891,26 +11907,29 @@
         },
         "x-speakeasy-group": "customer_portal.license_keys",
         "x-speakeasy-name-override": "activate",
+        "security": [
+          {}
+        ],
         "x-codeSamples": [
           {
             "lang": "go",
             "label": "Go (SDK)",
-            "source": "package main\n\nimport(\n\t\"context\"\n\t\"os\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"github.com/polarsource/polar-go/models/components\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New(\n        polargo.WithSecurity(os.Getenv(\"POLAR_ACCESS_TOKEN\")),\n    )\n\n    res, err := s.CustomerPortal.LicenseKeys.Activate(ctx, components.LicenseKeyActivate{\n        Key: \"<key>\",\n        OrganizationID: \"<value>\",\n        Label: \"<value>\",\n    })\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.LicenseKeyActivationRead != nil {\n        // handle response\n    }\n}"
+            "source": "package main\n\nimport(\n\t\"context\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"github.com/polarsource/polar-go/models/components\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New()\n\n    res, err := s.CustomerPortal.LicenseKeys.Activate(ctx, components.LicenseKeyActivate{\n        Key: \"<key>\",\n        OrganizationID: \"<value>\",\n        Label: \"<value>\",\n    })\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.LicenseKeyActivationRead != nil {\n        // handle response\n    }\n}"
           },
           {
             "lang": "python",
             "label": "Python (SDK)",
-            "source": "from polar_sdk import Polar\n\n\nwith Polar(\n    access_token=\"<YOUR_BEARER_TOKEN_HERE>\",\n) as polar:\n\n    res = polar.customer_portal.license_keys.activate(request={\n        \"key\": \"<key>\",\n        \"organization_id\": \"<value>\",\n        \"label\": \"<value>\",\n    })\n\n    # Handle response\n    print(res)"
+            "source": "from polar_sdk import Polar\n\n\nwith Polar() as polar:\n\n    res = polar.customer_portal.license_keys.activate(request={\n        \"key\": \"<key>\",\n        \"organization_id\": \"<value>\",\n        \"label\": \"<value>\",\n    })\n\n    # Handle response\n    print(res)"
           },
           {
             "lang": "typescript",
             "label": "Typescript (SDK)",
-            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar({\n  accessToken: process.env[\"POLAR_ACCESS_TOKEN\"] ?? \"\",\n});\n\nasync function run() {\n  const result = await polar.customerPortal.licenseKeys.activate({\n    key: \"<key>\",\n    organizationId: \"<value>\",\n    label: \"<value>\",\n  });\n\n  console.log(result);\n}\n\nrun();"
+            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar();\n\nasync function run() {\n  const result = await polar.customerPortal.licenseKeys.activate({\n    key: \"<key>\",\n    organizationId: \"<value>\",\n    label: \"<value>\",\n  });\n\n  console.log(result);\n}\n\nrun();"
           },
           {
             "lang": "php",
             "label": "PHP (SDK)",
-            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\nuse Polar\\Models\\Components;\n\n$sdk = Polar\\Polar::builder()\n    ->setSecurity(\n        '<YOUR_BEARER_TOKEN_HERE>'\n    )\n    ->build();\n\n$request = new Components\\LicenseKeyActivate(\n    key: '<key>',\n    organizationId: '<value>',\n    label: '<value>',\n);\n\n$response = $sdk->customerPortal->licenseKeys->activate(\n    request: $request\n);\n\nif ($response->licenseKeyActivationRead !== null) {\n    // handle response\n}"
+            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\nuse Polar\\Models\\Components;\n\n$sdk = Polar\\Polar::builder()->build();\n\n$request = new Components\\LicenseKeyActivate(\n    key: '<key>',\n    organizationId: '<value>',\n    label: '<value>',\n);\n\n$response = $sdk->customerPortal->licenseKeys->activate(\n    request: $request\n);\n\nif ($response->licenseKeyActivationRead !== null) {\n    // handle response\n}"
           }
         ]
       }
@@ -11966,26 +11985,29 @@
         },
         "x-speakeasy-group": "customer_portal.license_keys",
         "x-speakeasy-name-override": "deactivate",
+        "security": [
+          {}
+        ],
         "x-codeSamples": [
           {
             "lang": "go",
             "label": "Go (SDK)",
-            "source": "package main\n\nimport(\n\t\"context\"\n\t\"os\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"github.com/polarsource/polar-go/models/components\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New(\n        polargo.WithSecurity(os.Getenv(\"POLAR_ACCESS_TOKEN\")),\n    )\n\n    res, err := s.CustomerPortal.LicenseKeys.Deactivate(ctx, components.LicenseKeyDeactivate{\n        Key: \"<key>\",\n        OrganizationID: \"<value>\",\n        ActivationID: \"<value>\",\n    })\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res != nil {\n        // handle response\n    }\n}"
+            "source": "package main\n\nimport(\n\t\"context\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"github.com/polarsource/polar-go/models/components\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New()\n\n    res, err := s.CustomerPortal.LicenseKeys.Deactivate(ctx, components.LicenseKeyDeactivate{\n        Key: \"<key>\",\n        OrganizationID: \"<value>\",\n        ActivationID: \"<value>\",\n    })\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res != nil {\n        // handle response\n    }\n}"
           },
           {
             "lang": "python",
             "label": "Python (SDK)",
-            "source": "from polar_sdk import Polar\n\n\nwith Polar(\n    access_token=\"<YOUR_BEARER_TOKEN_HERE>\",\n) as polar:\n\n    polar.customer_portal.license_keys.deactivate(request={\n        \"key\": \"<key>\",\n        \"organization_id\": \"<value>\",\n        \"activation_id\": \"<value>\",\n    })\n\n    # Use the SDK ..."
+            "source": "from polar_sdk import Polar\n\n\nwith Polar() as polar:\n\n    polar.customer_portal.license_keys.deactivate(request={\n        \"key\": \"<key>\",\n        \"organization_id\": \"<value>\",\n        \"activation_id\": \"<value>\",\n    })\n\n    # Use the SDK ..."
           },
           {
             "lang": "typescript",
             "label": "Typescript (SDK)",
-            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar({\n  accessToken: process.env[\"POLAR_ACCESS_TOKEN\"] ?? \"\",\n});\n\nasync function run() {\n  await polar.customerPortal.licenseKeys.deactivate({\n    key: \"<key>\",\n    organizationId: \"<value>\",\n    activationId: \"<value>\",\n  });\n\n\n}\n\nrun();"
+            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar();\n\nasync function run() {\n  await polar.customerPortal.licenseKeys.deactivate({\n    key: \"<key>\",\n    organizationId: \"<value>\",\n    activationId: \"<value>\",\n  });\n\n\n}\n\nrun();"
           },
           {
             "lang": "php",
             "label": "PHP (SDK)",
-            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\nuse Polar\\Models\\Components;\n\n$sdk = Polar\\Polar::builder()\n    ->setSecurity(\n        '<YOUR_BEARER_TOKEN_HERE>'\n    )\n    ->build();\n\n$request = new Components\\LicenseKeyDeactivate(\n    key: '<key>',\n    organizationId: '<value>',\n    activationId: '<value>',\n);\n\n$response = $sdk->customerPortal->licenseKeys->deactivate(\n    request: $request\n);\n\nif ($response->statusCode === 200) {\n    // handle response\n}"
+            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\nuse Polar\\Models\\Components;\n\n$sdk = Polar\\Polar::builder()->build();\n\n$request = new Components\\LicenseKeyDeactivate(\n    key: '<key>',\n    organizationId: '<value>',\n    activationId: '<value>',\n);\n\n$response = $sdk->customerPortal->licenseKeys->deactivate(\n    request: $request\n);\n\nif ($response->statusCode === 200) {\n    // handle response\n}"
           }
         ]
       }
@@ -12666,6 +12688,107 @@
         ]
       }
     },
+    "/v1/customer-portal/orders/{id}/retry-payment": {
+      "post": {
+        "tags": [
+          "customer_portal",
+          "orders",
+          "documented"
+        ],
+        "summary": "Retry Payment",
+        "description": "Manually retry payment for a failed order.\n\n**Scopes**: `customer_portal:write`",
+        "operationId": "customer_portal:orders:retry_payment",
+        "security": [
+          {
+            "customer_session": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid4",
+              "description": "The order ID.",
+              "title": "Id"
+            },
+            "description": "The order ID."
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceNotFound"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Payment already in progress.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentAlreadyInProgress"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Order not eligible for retry.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderNotEligibleForRetry"
+                }
+              }
+            }
+          }
+        },
+        "x-polar-allowed-subjects": [
+          "Customer"
+        ],
+        "x-speakeasy-mcp": {
+          "disabled": true
+        },
+        "x-speakeasy-group": "customer_portal.orders",
+        "x-speakeasy-name-override": "retry_payment",
+        "x-codeSamples": [
+          {
+            "lang": "go",
+            "label": "Go (SDK)",
+            "source": "package main\n\nimport(\n\t\"context\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"os\"\n\t\"github.com/polarsource/polar-go/models/operations\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New()\n\n    res, err := s.CustomerPortal.Orders.RetryPayment(ctx, operations.CustomerPortalOrdersRetryPaymentSecurity{\n        CustomerSession: os.Getenv(\"POLAR_CUSTOMER_SESSION\"),\n    }, \"<value>\")\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.Any != nil {\n        // handle response\n    }\n}"
+          },
+          {
+            "lang": "python",
+            "label": "Python (SDK)",
+            "source": "import polar_sdk\nfrom polar_sdk import Polar\n\n\nwith Polar() as polar:\n\n    res = polar.customer_portal.orders.retry_payment(security=polar_sdk.CustomerPortalOrdersRetryPaymentSecurity(\n        customer_session=\"<YOUR_BEARER_TOKEN_HERE>\",\n    ), id=\"<value>\")\n\n    # Handle response\n    print(res)"
+          },
+          {
+            "lang": "typescript",
+            "label": "Typescript (SDK)",
+            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar();\n\nasync function run() {\n  const result = await polar.customerPortal.orders.retryPayment({\n    customerSession: process.env[\"POLAR_CUSTOMER_SESSION\"] ?? \"\",\n  }, {\n    id: \"<value>\",\n  });\n\n  console.log(result);\n}\n\nrun();"
+          },
+          {
+            "lang": "php",
+            "label": "PHP (SDK)",
+            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\nuse Polar\\Models\\Operations;\n\n$sdk = Polar\\Polar::builder()->build();\n\n\n$requestSecurity = new Operations\\CustomerPortalOrdersRetryPaymentSecurity(\n    customerSession: '<YOUR_BEARER_TOKEN_HERE>',\n);\n\n$response = $sdk->customerPortal->orders->retryPayment(\n    security: $requestSecurity,\n    id: '<value>'\n\n);\n\nif ($response->any !== null) {\n    // handle response\n}"
+          }
+        ]
+      }
+    },
     "/v1/customer-portal/organizations/{slug}": {
       "get": {
         "tags": [
@@ -12726,26 +12849,29 @@
         },
         "x-speakeasy-group": "customer_portal.organizations",
         "x-speakeasy-name-override": "get",
+        "security": [
+          {}
+        ],
         "x-codeSamples": [
           {
             "lang": "go",
             "label": "Go (SDK)",
-            "source": "package main\n\nimport(\n\t\"context\"\n\t\"os\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New(\n        polargo.WithSecurity(os.Getenv(\"POLAR_ACCESS_TOKEN\")),\n    )\n\n    res, err := s.CustomerPortal.Organizations.Get(ctx, \"<value>\")\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.CustomerOrganization != nil {\n        // handle response\n    }\n}"
+            "source": "package main\n\nimport(\n\t\"context\"\n\tpolargo \"github.com/polarsource/polar-go\"\n\t\"log\"\n)\n\nfunc main() {\n    ctx := context.Background()\n\n    s := polargo.New()\n\n    res, err := s.CustomerPortal.Organizations.Get(ctx, \"<value>\")\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.CustomerOrganization != nil {\n        // handle response\n    }\n}"
           },
           {
             "lang": "python",
             "label": "Python (SDK)",
-            "source": "from polar_sdk import Polar\n\n\nwith Polar(\n    access_token=\"<YOUR_BEARER_TOKEN_HERE>\",\n) as polar:\n\n    res = polar.customer_portal.organizations.get(slug=\"<value>\")\n\n    # Handle response\n    print(res)"
+            "source": "from polar_sdk import Polar\n\n\nwith Polar() as polar:\n\n    res = polar.customer_portal.organizations.get(slug=\"<value>\")\n\n    # Handle response\n    print(res)"
           },
           {
             "lang": "typescript",
             "label": "Typescript (SDK)",
-            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar({\n  accessToken: process.env[\"POLAR_ACCESS_TOKEN\"] ?? \"\",\n});\n\nasync function run() {\n  const result = await polar.customerPortal.organizations.get({\n    slug: \"<value>\",\n  });\n\n  console.log(result);\n}\n\nrun();"
+            "source": "import { Polar } from \"@polar-sh/sdk\";\n\nconst polar = new Polar();\n\nasync function run() {\n  const result = await polar.customerPortal.organizations.get({\n    slug: \"<value>\",\n  });\n\n  console.log(result);\n}\n\nrun();"
           },
           {
             "lang": "php",
             "label": "PHP (SDK)",
-            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\n\n$sdk = Polar\\Polar::builder()\n    ->setSecurity(\n        '<YOUR_BEARER_TOKEN_HERE>'\n    )\n    ->build();\n\n\n\n$response = $sdk->customerPortal->organizations->get(\n    slug: '<value>'\n);\n\nif ($response->customerOrganization !== null) {\n    // handle response\n}"
+            "source": "declare(strict_types=1);\n\nrequire 'vendor/autoload.php';\n\nuse Polar;\n\n$sdk = Polar\\Polar::builder()->build();\n\n\n\n$response = $sdk->customerPortal->organizations->get(\n    slug: '<value>'\n);\n\nif ($response->customerOrganization !== null) {\n    // handle response\n}"
           }
         ]
       }
@@ -20706,6 +20832,11 @@
               "e4b478fa-cd25-4253-9f1f-8a41e6370ede"
             ]
           },
+          "processor_metadata": {
+            "type": "object",
+            "title": "Processor Metadata",
+            "description": "Additional metadata from the payment processor for internal use."
+          },
           "method_metadata": {
             "$ref": "#/components/schemas/CardPaymentMetadata",
             "description": "Additional metadata for the card payment method."
@@ -21678,6 +21809,9 @@
           },
           {
             "$ref": "#/components/schemas/NotOpenCheckout"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentNotReady"
           }
         ]
       },
@@ -27942,6 +28076,19 @@
             "type": "array",
             "title": "Items",
             "description": "Line items composing the order."
+          },
+          "next_payment_attempt_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Payment Attempt At",
+            "description": "When the next payment retry is scheduled"
           }
         },
         "type": "object",
@@ -33758,6 +33905,11 @@
             "examples": [
               "e4b478fa-cd25-4253-9f1f-8a41e6370ede"
             ]
+          },
+          "processor_metadata": {
+            "type": "object",
+            "title": "Processor Metadata",
+            "description": "Additional metadata from the payment processor for internal use."
           }
         },
         "type": "object",
@@ -36268,6 +36420,17 @@
             ],
             "title": "Revenue"
           },
+          "net_revenue": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Net Revenue"
+          },
           "cumulative_revenue": {
             "anyOf": [
               {
@@ -36279,6 +36442,17 @@
             ],
             "title": "Cumulative Revenue"
           },
+          "net_cumulative_revenue": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Net Cumulative Revenue"
+          },
           "average_order_value": {
             "anyOf": [
               {
@@ -36289,6 +36463,17 @@
               }
             ],
             "title": "Average Order Value"
+          },
+          "net_average_order_value": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Net Average Order Value"
           },
           "one_time_products": {
             "anyOf": [
@@ -36312,6 +36497,17 @@
             ],
             "title": "One Time Products Revenue"
           },
+          "one_time_products_net_revenue": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "One Time Products Net Revenue"
+          },
           "new_subscriptions": {
             "anyOf": [
               {
@@ -36333,6 +36529,17 @@
               }
             ],
             "title": "New Subscriptions Revenue"
+          },
+          "new_subscriptions_net_revenue": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "New Subscriptions Net Revenue"
           },
           "renewed_subscriptions": {
             "anyOf": [
@@ -36356,6 +36563,17 @@
             ],
             "title": "Renewed Subscriptions Revenue"
           },
+          "renewed_subscriptions_net_revenue": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Renewed Subscriptions Net Revenue"
+          },
           "active_subscriptions": {
             "anyOf": [
               {
@@ -36377,6 +36595,17 @@
               }
             ],
             "title": "Monthly Recurring Revenue"
+          },
+          "committed_monthly_recurring_revenue": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Committed Monthly Recurring Revenue"
           },
           "checkouts": {
             "anyOf": [
@@ -36417,16 +36646,23 @@
           "timestamp",
           "orders",
           "revenue",
+          "net_revenue",
           "cumulative_revenue",
+          "net_cumulative_revenue",
           "average_order_value",
+          "net_average_order_value",
           "one_time_products",
           "one_time_products_revenue",
+          "one_time_products_net_revenue",
           "new_subscriptions",
           "new_subscriptions_revenue",
+          "new_subscriptions_net_revenue",
           "renewed_subscriptions",
           "renewed_subscriptions_revenue",
+          "renewed_subscriptions_net_revenue",
           "active_subscriptions",
           "monthly_recurring_revenue",
+          "committed_monthly_recurring_revenue",
           "checkouts",
           "succeeded_checkouts",
           "checkouts_conversion"
@@ -36450,10 +36686,19 @@
           "revenue": {
             "$ref": "#/components/schemas/Metric"
           },
+          "net_revenue": {
+            "$ref": "#/components/schemas/Metric"
+          },
           "cumulative_revenue": {
             "$ref": "#/components/schemas/Metric"
           },
+          "net_cumulative_revenue": {
+            "$ref": "#/components/schemas/Metric"
+          },
           "average_order_value": {
+            "$ref": "#/components/schemas/Metric"
+          },
+          "net_average_order_value": {
             "$ref": "#/components/schemas/Metric"
           },
           "one_time_products": {
@@ -36462,10 +36707,16 @@
           "one_time_products_revenue": {
             "$ref": "#/components/schemas/Metric"
           },
+          "one_time_products_net_revenue": {
+            "$ref": "#/components/schemas/Metric"
+          },
           "new_subscriptions": {
             "$ref": "#/components/schemas/Metric"
           },
           "new_subscriptions_revenue": {
+            "$ref": "#/components/schemas/Metric"
+          },
+          "new_subscriptions_net_revenue": {
             "$ref": "#/components/schemas/Metric"
           },
           "renewed_subscriptions": {
@@ -36474,10 +36725,16 @@
           "renewed_subscriptions_revenue": {
             "$ref": "#/components/schemas/Metric"
           },
+          "renewed_subscriptions_net_revenue": {
+            "$ref": "#/components/schemas/Metric"
+          },
           "active_subscriptions": {
             "$ref": "#/components/schemas/Metric"
           },
           "monthly_recurring_revenue": {
+            "$ref": "#/components/schemas/Metric"
+          },
+          "committed_monthly_recurring_revenue": {
             "$ref": "#/components/schemas/Metric"
           },
           "checkouts": {
@@ -36494,16 +36751,23 @@
         "required": [
           "orders",
           "revenue",
+          "net_revenue",
           "cumulative_revenue",
+          "net_cumulative_revenue",
           "average_order_value",
+          "net_average_order_value",
           "one_time_products",
           "one_time_products_revenue",
+          "one_time_products_net_revenue",
           "new_subscriptions",
           "new_subscriptions_revenue",
+          "new_subscriptions_net_revenue",
           "renewed_subscriptions",
           "renewed_subscriptions_revenue",
+          "renewed_subscriptions_net_revenue",
           "active_subscriptions",
           "monthly_recurring_revenue",
+          "committed_monthly_recurring_revenue",
           "checkouts",
           "succeeded_checkouts",
           "checkouts_conversion"
@@ -36632,6 +36896,17 @@
             ],
             "title": "Revenue"
           },
+          "net_revenue": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Net Revenue"
+          },
           "cumulative_revenue": {
             "anyOf": [
               {
@@ -36643,6 +36918,17 @@
             ],
             "title": "Cumulative Revenue"
           },
+          "net_cumulative_revenue": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Net Cumulative Revenue"
+          },
           "average_order_value": {
             "anyOf": [
               {
@@ -36653,6 +36939,17 @@
               }
             ],
             "title": "Average Order Value"
+          },
+          "net_average_order_value": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Net Average Order Value"
           },
           "one_time_products": {
             "anyOf": [
@@ -36676,6 +36973,17 @@
             ],
             "title": "One Time Products Revenue"
           },
+          "one_time_products_net_revenue": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "One Time Products Net Revenue"
+          },
           "new_subscriptions": {
             "anyOf": [
               {
@@ -36697,6 +37005,17 @@
               }
             ],
             "title": "New Subscriptions Revenue"
+          },
+          "new_subscriptions_net_revenue": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "New Subscriptions Net Revenue"
           },
           "renewed_subscriptions": {
             "anyOf": [
@@ -36720,6 +37039,17 @@
             ],
             "title": "Renewed Subscriptions Revenue"
           },
+          "renewed_subscriptions_net_revenue": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Renewed Subscriptions Net Revenue"
+          },
           "active_subscriptions": {
             "anyOf": [
               {
@@ -36741,6 +37071,17 @@
               }
             ],
             "title": "Monthly Recurring Revenue"
+          },
+          "committed_monthly_recurring_revenue": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Committed Monthly Recurring Revenue"
           },
           "checkouts": {
             "anyOf": [
@@ -36780,16 +37121,23 @@
         "required": [
           "orders",
           "revenue",
+          "net_revenue",
           "cumulative_revenue",
+          "net_cumulative_revenue",
           "average_order_value",
+          "net_average_order_value",
           "one_time_products",
           "one_time_products_revenue",
+          "one_time_products_net_revenue",
           "new_subscriptions",
           "new_subscriptions_revenue",
+          "new_subscriptions_net_revenue",
           "renewed_subscriptions",
           "renewed_subscriptions_revenue",
+          "renewed_subscriptions_net_revenue",
           "active_subscriptions",
           "monthly_recurring_revenue",
+          "committed_monthly_recurring_revenue",
           "checkouts",
           "succeeded_checkouts",
           "checkouts_conversion"
@@ -37561,6 +37909,28 @@
         "title": "OrderItemSchema",
         "description": "An order line item."
       },
+      "OrderNotEligibleForRetry": {
+        "properties": {
+          "error": {
+            "type": "string",
+            "const": "OrderNotEligibleForRetry",
+            "title": "Error",
+            "examples": [
+              "OrderNotEligibleForRetry"
+            ]
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "error",
+          "detail"
+        ],
+        "title": "OrderNotEligibleForRetry"
+      },
       "OrderProduct": {
         "properties": {
           "metadata": {
@@ -37673,6 +38043,10 @@
         "enum": [
           "created_at",
           "-created_at",
+          "status",
+          "-status",
+          "invoice_number",
+          "-invoice_number",
           "amount",
           "-amount",
           "net_amount",
@@ -38512,6 +38886,7 @@
           },
           "future_annual_revenue": {
             "type": "integer",
+            "minimum": 0,
             "title": "Future Annual Revenue",
             "description": "Estimated revenue in the next 12 months"
           },
@@ -38542,6 +38917,7 @@
           },
           "previous_annual_revenue": {
             "type": "integer",
+            "minimum": 0,
             "title": "Previous Annual Revenue",
             "description": "Revenue from last year if applicable.",
             "default": 0
@@ -38934,6 +39310,28 @@
           }
         ]
       },
+      "PaymentAlreadyInProgress": {
+        "properties": {
+          "error": {
+            "type": "string",
+            "const": "PaymentAlreadyInProgress",
+            "title": "Error",
+            "examples": [
+              "PaymentAlreadyInProgress"
+            ]
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "error",
+          "detail"
+        ],
+        "title": "PaymentAlreadyInProgress"
+      },
       "PaymentError": {
         "properties": {
           "error": {
@@ -39101,6 +39499,28 @@
           "type"
         ],
         "title": "PaymentMethodGeneric"
+      },
+      "PaymentNotReady": {
+        "properties": {
+          "error": {
+            "type": "string",
+            "const": "PaymentNotReady",
+            "title": "Error",
+            "examples": [
+              "PaymentNotReady"
+            ]
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "error",
+          "detail"
+        ],
+        "title": "PaymentNotReady"
       },
       "PaymentProcessor": {
         "type": "string",
@@ -40952,7 +41372,6 @@
           "profile",
           "email",
           "user:read",
-          "admin",
           "web_default",
           "organizations:read",
           "organizations:write",
